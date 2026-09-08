@@ -9,3 +9,29 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# ---- Scheduled Rebuilds (auto-sync new GitHub repos) ----
+#
+# Netlify doesn't support cron natively, so we trigger scheduled builds
+# through a Build Hook URL.
+#
+# HOW TO SET UP THE DAILY REBUILD:
+#   1. Go to app.netlify.com -> your site -> Site build & deploy ->
+#      Build hooks
+#   2. Click "Add build hook", name it "daily-sync", save it
+#   3. Copy the generated URL like:
+#        https://api.netlify.com/build_hooks/XXXXXXXXXXXX
+#   4. Paste that URL on https://cron-job.org (free) or a cron service
+#      and schedule it to fire once per day (e.g. every 24h)
+#
+# The build hook triggers `npm run build`, which first runs the
+# sync-github.js script -> pulls any new repo into projects/ -> site updates.
+
+[context.production]
+  command = "npm run build"
+
+[context.branch-deploy]
+  command = "npm run build"
+
+[context.deploy-preview]
+  command = "npm run build"
