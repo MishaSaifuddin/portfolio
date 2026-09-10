@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * *"
+    - cron: "17 * * * *"
 
 permissions:
   contents: read
@@ -37,6 +37,7 @@ jobs:
       - name: Build site
         env:
           NEXT_PUBLIC_BASE_PATH: /portfolio
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm ci && npm run build
 
       - name: Upload artifact

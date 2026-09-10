@@ -5,8 +5,14 @@ const path = require("path");
 const GITHUB_USERNAME = "MishaSaifuddin";
 const PROJECTS_DIR = path.join(process.cwd(), "projects");
 
+// Repos to exclude from the portfolio (e.g. the site itself)
+const IGNORE_REPOS = new Set(["portfolio"]);
+
 async function fetchJSON(url) {
-  const response = await fetch(url);
+  const headers = process.env.GITHUB_TOKEN
+    ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+    : {};
+  const response = await fetch(url, { headers });
   if (!response.ok) {
     throw new Error(`GitHub API error: ${response.status} ${response.statusText} for ${url}`);
   }
@@ -116,7 +122,7 @@ async function main() {
   console.log(`Fetching GitHub repos for @${GITHUB_USERNAME}...`);
 
   const repos = await fetchGitHubRepos();
-  const nonForks = repos.filter((r) => !r.fork);
+  const nonForks = repos.filter((r) => !r.fork && !IGNORE_REPOS.has(r.name.toLowerCase()));
   console.log(`Found ${repos.length} repositories (${nonForks.length} non-fork)`);
 
   if (!fs.existsSync(PROJECTS_DIR)) {
